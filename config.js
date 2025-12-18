@@ -6,4 +6,4 @@ const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
 
 // Password Protection
 // Change this to your desired password
-const ADD_PASSWORD = 'YourSecurePassword123';
+const ADD_PASSWORD = 'P@ssw0rd';
