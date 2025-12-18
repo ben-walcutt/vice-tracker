@@ -557,6 +557,13 @@
         document.getElementById('cocktail-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Check password
+            const password = prompt('Enter password to add cocktail:');
+            if (password !== ADD_PASSWORD) {
+                showError('Incorrect password');
+                return;
+            }
+            
             const rating = document.getElementById('cocktail-rating').getRating();
             if (rating === 0) {
                 showError('Please select a rating');
@@ -590,6 +597,13 @@
         });
 
         async function deleteCocktail(id) {
+            // Check password
+            const password = prompt('Enter password to delete:');
+            if (password !== ADD_PASSWORD) {
+                showError('Incorrect password');
+                return;
+            }
+            
             if (!confirm('Are you sure you want to delete this cocktail?')) return;
 
             const { error } = await sb
@@ -650,6 +664,13 @@
         document.getElementById('cigar-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Check password
+            const password = prompt('Enter password to add cigar:');
+            if (password !== ADD_PASSWORD) {
+                showError('Incorrect password');
+                return;
+            }
+            
             const rating = document.getElementById('cigar-rating').getRating();
             if (rating === 0) {
                 showError('Please select a rating');
@@ -683,6 +704,13 @@
         });
 
         async function deleteCigar(id) {
+            // Check password
+            const password = prompt('Enter password to delete:');
+            if (password !== ADD_PASSWORD) {
+                showError('Incorrect password');
+                return;
+            }
+            
             if (!confirm('Are you sure you want to delete this cigar?')) return;
 
             const { error } = await sb
@@ -743,6 +771,13 @@
         document.getElementById('bar-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Check password
+            const password = prompt('Enter password to add bar:');
+            if (password !== ADD_PASSWORD) {
+                showError('Incorrect password');
+                return;
+            }
+            
             const rating = document.getElementById('bar-rating').getRating();
             if (rating === 0) {
                 showError('Please select a rating');
@@ -776,6 +811,13 @@
         });
 
         async function deleteBar(id) {
+            // Check password
+            const password = prompt('Enter password to delete:');
+            if (password !== ADD_PASSWORD) {
+                showError('Incorrect password');
+                return;
+            }
+            
             if (!confirm('Are you sure you want to delete this bar?')) return;
 
             const { error } = await sb
