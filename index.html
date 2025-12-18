@@ -680,7 +680,7 @@
             const { data, error } = await sb
                 .from('cocktails')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('name', { ascending: true });
 
             if (error) {
                 document.getElementById('cocktails-list').innerHTML = 
