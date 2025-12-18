@@ -290,6 +290,34 @@
             font-style: italic;
         }
 
+        .search-bar {
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
         .loading {
             text-align: center;
             padding: 2rem;
@@ -364,6 +392,9 @@
 
         <!-- Cocktails Tab -->
         <div class="tab-content active" id="cocktails">
+            <div class="search-bar">
+                <input type="text" id="cocktails-search" class="search-input" placeholder="Search cocktails by name, spirit, or type...">
+            </div>
             <div id="cocktails-list" class="items-grid">
                 <div class="loading">Loading cocktails...</div>
             </div>
@@ -407,6 +438,9 @@
 
         <!-- Cigars Tab -->
         <div class="tab-content" id="cigars">
+            <div class="search-bar">
+                <input type="text" id="cigars-search" class="search-input" placeholder="Search cigars by manufacturer, brand, or vitola...">
+            </div>
             <div id="cigars-list" class="items-grid">
                 <div class="loading">Loading cigars...</div>
             </div>
@@ -444,6 +478,9 @@
 
         <!-- Bars Tab -->
         <div class="tab-content" id="bars">
+            <div class="search-bar">
+                <input type="text" id="bars-search" class="search-input" placeholder="Search bars by name, aesthetic, or price...">
+            </div>
             <div id="bars-list" class="items-grid">
                 <div class="loading">Loading bars...</div>
             </div>
@@ -491,6 +528,11 @@
     <script>
         // Initialize Supabase client
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Storage for all items (for filtering)
+        let allCocktails = [];
+        let allCigars = [];
+        let allBars = [];
 
         // Show error message
         function showError(message) {
@@ -632,13 +674,24 @@
                 return;
             }
 
-            displayCocktails(data);
+            allCocktails = data;
+            filterCocktails();
+        }
+
+        function filterCocktails() {
+            const searchTerm = document.getElementById('cocktails-search').value.toLowerCase();
+            const filtered = allCocktails.filter(c => 
+                c.name.toLowerCase().includes(searchTerm) ||
+                c.spirit.toLowerCase().includes(searchTerm) ||
+                c.type.toLowerCase().includes(searchTerm)
+            );
+            displayCocktails(filtered);
         }
 
         function displayCocktails(cocktails) {
             const container = document.getElementById('cocktails-list');
             if (cocktails.length === 0) {
-                container.innerHTML = '<div class="empty-state">No cocktails tracked yet. Add your first one above.</div>';
+                container.innerHTML = '<div class="empty-state">No cocktails found.</div>';
                 return;
             }
 
@@ -739,13 +792,24 @@
                 return;
             }
 
-            displayCigars(data);
+            allCigars = data;
+            filterCigars();
+        }
+
+        function filterCigars() {
+            const searchTerm = document.getElementById('cigars-search').value.toLowerCase();
+            const filtered = allCigars.filter(c => 
+                c.manufacturer.toLowerCase().includes(searchTerm) ||
+                c.brand.toLowerCase().includes(searchTerm) ||
+                c.vitola.toLowerCase().includes(searchTerm)
+            );
+            displayCigars(filtered);
         }
 
         function displayCigars(cigars) {
             const container = document.getElementById('cigars-list');
             if (cigars.length === 0) {
-                container.innerHTML = '<div class="empty-state">No cigars tracked yet. Add your first one above.</div>';
+                container.innerHTML = '<div class="empty-state">No cigars found.</div>';
                 return;
             }
 
@@ -846,13 +910,24 @@
                 return;
             }
 
-            displayBars(data);
+            allBars = data;
+            filterBars();
+        }
+
+        function filterBars() {
+            const searchTerm = document.getElementById('bars-search').value.toLowerCase();
+            const filtered = allBars.filter(b => 
+                b.name.toLowerCase().includes(searchTerm) ||
+                b.aesthetic.toLowerCase().includes(searchTerm) ||
+                b.price.toLowerCase().includes(searchTerm)
+            );
+            displayBars(filtered);
         }
 
         function displayBars(bars) {
             const container = document.getElementById('bars-list');
             if (bars.length === 0) {
-                container.innerHTML = '<div class="empty-state">No bars tracked yet. Add your first one above.</div>';
+                container.innerHTML = '<div class="empty-state">No bars found.</div>';
                 return;
             }
 
@@ -882,6 +957,11 @@
                 loadCigars(),
                 loadBars()
             ]);
+
+            // Add search event listeners
+            document.getElementById('cocktails-search').addEventListener('input', filterCocktails);
+            document.getElementById('cigars-search').addEventListener('input', filterCigars);
+            document.getElementById('bars-search').addEventListener('input', filterBars);
         }
 
         init();
