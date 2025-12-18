@@ -653,29 +653,6 @@
             button.disabled = false;
         });
 
-        async function deleteCocktail(id) {
-            // Check password
-            const password = prompt('Enter password to delete:');
-            if (password !== ADD_PASSWORD) {
-                showError('Incorrect password');
-                return;
-            }
-            
-            if (!confirm('Are you sure you want to delete this cocktail?')) return;
-
-            const { error } = await sb
-                .from('cocktails')
-                .delete()
-                .eq('id', id);
-
-            if (error) {
-                showError('Error deleting cocktail: ' + error.message);
-                return;
-            }
-
-            await loadCocktails();
-        }
-
         async function loadCocktails() {
             const { data, error } = await sb
                 .from('cocktails')
@@ -723,7 +700,6 @@
                         </div>
                     </div>
                     <div class="item-rating">${'★'.repeat(c.rating)}${'☆'.repeat(5 - c.rating)}</div>
-                    <button class="delete-btn" onclick="deleteCocktail(${c.id})">Remove</button>
                 </div>
             `).join('');
         }
