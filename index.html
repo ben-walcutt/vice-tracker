@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vice Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #1a1410;
+            --bg-card: #2a2118;
+            --accent-gold: #d4af37;
+            --accent-copper: #b87333;
+            --text-light: #f5f1e8;
+            --text-muted: #a89984;
+            --border: #3d3528;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #231a12 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4.5rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+
+        .tab {
+            font-family: 'Cormorant Garamond', serif;
+            flex: 1;
+            padding: 1.25rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            text-transform: uppercase;
+        }
+
+        .tab:hover {
+            color: var(--accent-copper);
+        }
+
+        .tab.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 2px;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            margin-bottom: 1.5rem;
+            color: var(--accent-copper);
+            text-transform: uppercase;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input, select {
+            padding: 0.75rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .star {
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: var(--accent-gold);
+            transform: scale(1.1);
+        }
+
+        button {
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-copper));
+            border: none;
+            color: var(--bg-dark);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .item-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 2px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .item-card:hover {
+            border-color: var(--accent-copper);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .item-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+        }
+
+        .detail-value {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .item-rating {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--accent-gold);
+            font-size: 1.3rem;
+        }
+
+        .delete-btn {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            background: rgba(184, 115, 51, 0.2);
+            color: var(--accent-copper);
+            border: 1px solid var(--accent-copper);
+        }
+
+        .delete-btn:hover {
+            background: rgba(184, 115, 51, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .error {
+            background: rgba(184, 115, 51, 0.2);
+            border: 1px solid var(--accent-copper);
+            padding: 1rem;
+            border-radius: 2px;
+            margin-bottom: 2rem;
+            color: var(--accent-copper);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Vice Tracker</h1>
+            <p class="subtitle">A Gentleman's Ledger</p>
+        </header>
+
+        <div id="error-message"></div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="cocktails">Cocktails</button>
+            <button class="tab" data-tab="cigars">Cigars</button>
+            <button class="tab" data-tab="bars">Bars</button>
+        </div>
+
+        <!-- Cocktails Tab -->
+        <div class="tab-content active" id="cocktails">
+            <div class="form-section">
+                <h2 class="form-title">Add Cocktail</h2>
+                <form id="cocktail-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="cocktail-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Base Spirit</label>
+                            <input type="text" id="cocktail-spirit" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="cocktail-type" required>
+                                <option value="">Select Type</option>
+                                <option value="Cocktail">Cocktail</option>
+                                <option value="Shot">Shot</option>
+                                <option value="Neat Pour">Neat Pour</option>
+                                <option value="Bomb">Bomb</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <div class="rating-input" id="cocktail-rating">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                    </div>
+                    <button type="submit">Add Cocktail</button>
+                </form>
+            </div>
+            <div id="cocktails-list" class="items-grid">
+                <div class="loading">Loading cocktails...</div>
+            </div>
+        </div>
+
+        <!-- Cigars Tab -->
+        <div class="tab-content" id="cigars">
+            <div class="form-section">
+                <h2 class="form-title">Add Cigar</h2>
+                <form id="cigar-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Manufacturer</label>
+                            <input type="text" id="cigar-manufacturer" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <input type="text" id="cigar-brand" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vitola</label>
+                            <input type="text" id="cigar-vitola" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <div class="rating-input" id="cigar-rating">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                    </div>
+                    <button type="submit">Add Cigar</button>
+                </form>
+            </div>
+            <div id="cigars-list" class="items-grid">
+                <div class="loading">Loading cigars...</div>
+            </div>
+        </div>
+
+        <!-- Bars Tab -->
+        <div class="tab-content" id="bars">
+            <div class="form-section">
+                <h2 class="form-title">Add Bar</h2>
+                <form id="bar-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="bar-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Aesthetic</label>
+                            <input type="text" id="bar-aesthetic" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Price Point</label>
+                            <select id="bar-price" required>
+                                <option value="">Select Price</option>
+                                <option value="$">$ - Budget</option>
+                                <option value="$$">$$ - Moderate</option>
+                                <option value="$$$">$$$ - Upscale</option>
+                                <option value="$$$$">$$$$ - Luxury</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <div class="rating-input" id="bar-rating">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                    </div>
+                    <button type="submit">Add Bar</button>
+                </form>
+            </div>
+            <div id="bars-list" class="items-grid">
+                <div class="loading">Loading bars...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script>
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.innerHTML = `<div class="error">${message}</div>`;
+            setTimeout(() => {
+                errorDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Rating system
+        function setupRating(containerId) {
+            const container = document.getElementById(containerId);
+            const stars = container.querySelectorAll('.star');
+            let selectedRating = 0;
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    selectedRating = parseInt(star.dataset.rating);
+                    updateStars(stars, selectedRating);
+                });
+
+                star.addEventListener('mouseenter', () => {
+                    updateStars(stars, parseInt(star.dataset.rating));
+                });
+            });
+
+            container.addEventListener('mouseleave', () => {
+                updateStars(stars, selectedRating);
+            });
+
+            container.getRating = () => selectedRating;
+            container.resetRating = () => {
+                selectedRating = 0;
+                updateStars(stars, 0);
+            };
+        }
+
+        function updateStars(stars, rating) {
+            stars.forEach(star => {
+                if (parseInt(star.dataset.rating) <= rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        setupRating('cocktail-rating');
+        setupRating('cigar-rating');
+        setupRating('bar-rating');
+
+        // Cocktails
+        document.getElementById('cocktail-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const rating = document.getElementById('cocktail-rating').getRating();
+            if (rating === 0) {
+                showError('Please select a rating');
+                return;
+            }
+
+            const button = e.target.querySelector('button');
+            button.disabled = true;
+
+            const cocktail = {
+                name: document.getElementById('cocktail-name').value,
+                spirit: document.getElementById('cocktail-spirit').value,
+                type: document.getElementById('cocktail-type').value,
+                rating: rating
+            };
+
+            const { error } = await supabase
+                .from('cocktails')
+                .insert([cocktail]);
+
+            if (error) {
+                showError('Error adding cocktail: ' + error.message);
+                button.disabled = false;
+                return;
+            }
+
+            await loadCocktails();
+            e.target.reset();
+            document.getElementById('cocktail-rating').resetRating();
+            button.disabled = false;
+        });
+
+        async function deleteCocktail(id) {
+            if (!confirm('Are you sure you want to delete this cocktail?')) return;
+
+            const { error } = await supabase
+                .from('cocktails')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                showError('Error deleting cocktail: ' + error.message);
+                return;
+            }
+
+            await loadCocktails();
+        }
+
+        async function loadCocktails() {
+            const { data, error } = await supabase
+                .from('cocktails')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                document.getElementById('cocktails-list').innerHTML = 
+                    `<div class="error">Error loading cocktails: ${error.message}</div>`;
+                return;
+            }
+
+            displayCocktails(data);
+        }
+
+        function displayCocktails(cocktails) {
+            const container = document.getElementById('cocktails-list');
+            if (cocktails.length === 0) {
+                container.innerHTML = '<div class="empty-state">No cocktails tracked yet. Add your first one above.</div>';
+                return;
+            }
+
+            container.innerHTML = cocktails.map(c => `
+                <div class="item-card">
+                    <div class="item-name">${c.name}</div>
+                    <div class="item-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Spirit</span>
+                            <span class="detail-value">${c.spirit}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Type</span>
+                            <span class="detail-value">${c.type}</span>
+                        </div>
+                    </div>
+                    <div class="item-rating">${'★'.repeat(c.rating)}${'☆'.repeat(5 - c.rating)}</div>
+                    <button class="delete-btn" onclick="deleteCocktail(${c.id})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        // Cigars
+        document.getElementById('cigar-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const rating = document.getElementById('cigar-rating').getRating();
+            if (rating === 0) {
+                showError('Please select a rating');
+                return;
+            }
+
+            const button = e.target.querySelector('button');
+            button.disabled = true;
+
+            const cigar = {
+                manufacturer: document.getElementById('cigar-manufacturer').value,
+                brand: document.getElementById('cigar-brand').value,
+                vitola: document.getElementById('cigar-vitola').value,
+                rating: rating
+            };
+
+            const { error } = await supabase
+                .from('cigars')
+                .insert([cigar]);
+
+            if (error) {
+                showError('Error adding cigar: ' + error.message);
+                button.disabled = false;
+                return;
+            }
+
+            await loadCigars();
+            e.target.reset();
+            document.getElementById('cigar-rating').resetRating();
+            button.disabled = false;
+        });
+
+        async function deleteCigar(id) {
+            if (!confirm('Are you sure you want to delete this cigar?')) return;
+
+            const { error } = await supabase
+                .from('cigars')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                showError('Error deleting cigar: ' + error.message);
+                return;
+            }
+
+            await loadCigars();
+        }
+
+        async function loadCigars() {
+            const { data, error } = await supabase
+                .from('cigars')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                document.getElementById('cigars-list').innerHTML = 
+                    `<div class="error">Error loading cigars: ${error.message}</div>`;
+                return;
+            }
+
+            displayCigars(data);
+        }
+
+        function displayCigars(cigars) {
+            const container = document.getElementById('cigars-list');
+            if (cigars.length === 0) {
+                container.innerHTML = '<div class="empty-state">No cigars tracked yet. Add your first one above.</div>';
+                return;
+            }
+
+            container.innerHTML = cigars.map(c => `
+                <div class="item-card">
+                    <div class="item-name">${c.brand}</div>
+                    <div class="item-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Manufacturer</span>
+                            <span class="detail-value">${c.manufacturer}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Vitola</span>
+                            <span class="detail-value">${c.vitola}</span>
+                        </div>
+                    </div>
+                    <div class="item-rating">${'★'.repeat(c.rating)}${'☆'.repeat(5 - c.rating)}</div>
+                    <button class="delete-btn" onclick="deleteCigar(${c.id})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        // Bars
+        document.getElementById('bar-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const rating = document.getElementById('bar-rating').getRating();
+            if (rating === 0) {
+                showError('Please select a rating');
+                return;
+            }
+
+            const button = e.target.querySelector('button');
+            button.disabled = true;
+
+            const bar = {
+                name: document.getElementById('bar-name').value,
+                aesthetic: document.getElementById('bar-aesthetic').value,
+                price: document.getElementById('bar-price').value,
+                rating: rating
+            };
+
+            const { error } = await supabase
+                .from('bars')
+                .insert([bar]);
+
+            if (error) {
+                showError('Error adding bar: ' + error.message);
+                button.disabled = false;
+                return;
+            }
+
+            await loadBars();
+            e.target.reset();
+            document.getElementById('bar-rating').resetRating();
+            button.disabled = false;
+        });
+
+        async function deleteBar(id) {
+            if (!confirm('Are you sure you want to delete this bar?')) return;
+
+            const { error } = await supabase
+                .from('bars')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                showError('Error deleting bar: ' + error.message);
+                return;
+            }
+
+            await loadBars();
+        }
+
+        async function loadBars() {
+            const { data, error } = await supabase
+                .from('bars')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                document.getElementById('bars-list').innerHTML = 
+                    `<div class="error">Error loading bars: ${error.message}</div>`;
+                return;
+            }
+
+            displayBars(data);
+        }
+
+        function displayBars(bars) {
+            const container = document.getElementById('bars-list');
+            if (bars.length === 0) {
+                container.innerHTML = '<div class="empty-state">No bars tracked yet. Add your first one above.</div>';
+                return;
+            }
+
+            container.innerHTML = bars.map(b => `
+                <div class="item-card">
+                    <div class="item-name">${b.name}</div>
+                    <div class="item-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Aesthetic</span>
+                            <span class="detail-value">${b.aesthetic}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Price Point</span>
+                            <span class="detail-value">${b.price}</span>
+                        </div>
+                    </div>
+                    <div class="item-rating">${'★'.repeat(b.rating)}${'☆'.repeat(5 - b.rating)}</div>
+                    <button class="delete-btn" onclick="deleteBar(${b.id})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        // Initialize - load all data
+        async function init() {
+            await Promise.all([
+                loadCocktails(),
+                loadCigars(),
+                loadBars()
+            ]);
+        }
+
+        init();
+    </script>
+</body>
+</html>
