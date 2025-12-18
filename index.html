@@ -318,6 +318,130 @@
             font-style: italic;
         }
 
+        .recommend-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--accent-copper), var(--accent-gold));
+            border: none;
+            color: var(--bg-dark);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 2px;
+            box-shadow: 0 4px 20px rgba(184, 115, 51, 0.4);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .recommend-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(184, 115, 51, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 2px;
+            border: 1px solid var(--border);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-copper);
+            transform: rotate(90deg);
+        }
+
+        .ingredient-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .add-ingredient-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(184, 115, 51, 0.2);
+            border: 1px solid var(--accent-copper);
+            color: var(--accent-copper);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .add-ingredient-btn:hover {
+            background: rgba(184, 115, 51, 0.3);
+        }
+
+        .remove-ingredient-btn {
+            padding: 0.75rem 1rem;
+            background: rgba(184, 115, 51, 0.2);
+            border: 1px solid var(--accent-copper);
+            color: var(--accent-copper);
+            font-size: 0.9rem;
+        }
+
+        .remove-ingredient-btn:hover {
+            background: rgba(184, 115, 51, 0.3);
+        }
+
         .loading {
             text-align: center;
             padding: 2rem;
@@ -534,6 +658,37 @@
                     <button type="submit">Add Bar</button>
                 </form>
             </div>
+        </div>
+    </div>
+
+    <!-- Recommend Button -->
+    <button class="recommend-btn" id="recommend-btn">Recommend A Drink</button>
+
+    <!-- Recommendation Modal -->
+    <div class="modal" id="recommendation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Recommend A Cocktail</h2>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <form id="recommendation-form">
+                <div class="form-group">
+                    <label>Cocktail Name</label>
+                    <input type="text" id="rec-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Ingredients</label>
+                    <div id="ingredients-container">
+                        <div class="ingredient-row">
+                            <input type="text" class="ingredient-name" placeholder="Ingredient name" required>
+                            <input type="number" class="ingredient-amount" placeholder="Ounces" step="0.25" min="0" required>
+                            <button type="button" class="remove-ingredient-btn" onclick="removeIngredient(this)">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-ingredient-btn" id="add-ingredient">+ Add Ingredient</button>
+                </div>
+                <button type="submit">Submit Recommendation</button>
+            </form>
         </div>
     </div>
 
@@ -952,6 +1107,102 @@
             document.getElementById('cocktails-search').addEventListener('input', filterCocktails);
             document.getElementById('cigars-search').addEventListener('input', filterCigars);
             document.getElementById('bars-search').addEventListener('input', filterBars);
+
+            // Modal controls
+            document.getElementById('recommend-btn').addEventListener('click', () => {
+                document.getElementById('recommendation-modal').classList.add('active');
+            });
+
+            document.getElementById('close-modal').addEventListener('click', () => {
+                document.getElementById('recommendation-modal').classList.remove('active');
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('recommendation-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'recommendation-modal') {
+                    document.getElementById('recommendation-modal').classList.remove('active');
+                }
+            });
+
+            // Add ingredient button
+            document.getElementById('add-ingredient').addEventListener('click', addIngredientRow);
+
+            // Recommendation form submission
+            document.getElementById('recommendation-form').addEventListener('submit', submitRecommendation);
+        }
+
+        function addIngredientRow() {
+            const container = document.getElementById('ingredients-container');
+            const row = document.createElement('div');
+            row.className = 'ingredient-row';
+            row.innerHTML = `
+                <input type="text" class="ingredient-name" placeholder="Ingredient name" required>
+                <input type="number" class="ingredient-amount" placeholder="Ounces" step="0.25" min="0" required>
+                <button type="button" class="remove-ingredient-btn" onclick="removeIngredient(this)">Remove</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeIngredient(button) {
+            const container = document.getElementById('ingredients-container');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+            } else {
+                showError('You must have at least one ingredient');
+            }
+        }
+
+        async function submitRecommendation(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('rec-name').value;
+            const ingredientRows = document.querySelectorAll('.ingredient-row');
+            const ingredients = [];
+
+            ingredientRows.forEach(row => {
+                const ingredientName = row.querySelector('.ingredient-name').value;
+                const amount = row.querySelector('.ingredient-amount').value;
+                ingredients.push({
+                    name: ingredientName,
+                    amount: parseFloat(amount)
+                });
+            });
+
+            const recommendation = {
+                cocktail_name: name,
+                ingredients: JSON.stringify(ingredients),
+                created_at: new Date().toISOString()
+            };
+
+            const button = e.target.querySelector('button[type="submit"]');
+            button.disabled = true;
+
+            const { error } = await sb
+                .from('recommendations')
+                .insert([recommendation]);
+
+            if (error) {
+                showError('Error submitting recommendation: ' + error.message);
+                button.disabled = false;
+                return;
+            }
+
+            // Success! Close modal and reset form
+            document.getElementById('recommendation-modal').classList.remove('active');
+            document.getElementById('recommendation-form').reset();
+            
+            // Reset ingredients to just one row
+            const container = document.getElementById('ingredients-container');
+            container.innerHTML = `
+                <div class="ingredient-row">
+                    <input type="text" class="ingredient-name" placeholder="Ingredient name" required>
+                    <input type="number" class="ingredient-amount" placeholder="Ounces" step="0.25" min="0" required>
+                    <button type="button" class="remove-ingredient-btn" onclick="removeIngredient(this)">Remove</button>
+                </div>
+            `;
+            
+            button.disabled = false;
+            alert('Thank you for your recommendation!');
         }
 
         init();
