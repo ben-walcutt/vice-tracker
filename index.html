@@ -343,6 +343,31 @@
             box-shadow: 0 6px 25px rgba(184, 115, 51, 0.5);
         }
 
+        .random-btn {
+            position: fixed;
+            bottom: 6rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-copper));
+            border: none;
+            color: var(--bg-dark);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 2px;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .random-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -440,6 +465,51 @@
 
         .remove-ingredient-btn:hover {
             background: rgba(184, 115, 51, 0.3);
+        }
+
+        .random-result {
+            text-align: center;
+        }
+
+        .random-cocktail-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin-bottom: 2rem;
+            text-transform: capitalize;
+        }
+
+        .random-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .random-detail-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .random-detail-label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .random-detail-value {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .random-rating {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            margin-top: 1rem;
         }
 
         .loading {
@@ -664,6 +734,9 @@
     <!-- Recommend Button -->
     <button class="recommend-btn" id="recommend-btn">Recommend A Drink</button>
 
+    <!-- Random Drink Button -->
+    <button class="random-btn" id="random-btn">Random Drink</button>
+
     <!-- Recommendation Modal -->
     <div class="modal" id="recommendation-modal">
         <div class="modal-content">
@@ -689,6 +762,19 @@
                 </div>
                 <button type="submit">Submit Recommendation</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Random Drink Modal -->
+    <div class="modal" id="random-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Your Random Drink</h2>
+                <button class="close-btn" id="close-random-modal">&times;</button>
+            </div>
+            <div class="random-result" id="random-result">
+                <!-- Random cocktail will be displayed here -->
+            </div>
         </div>
     </div>
 
@@ -1124,6 +1210,20 @@
                 }
             });
 
+            // Random drink button
+            document.getElementById('random-btn').addEventListener('click', showRandomDrink);
+
+            document.getElementById('close-random-modal').addEventListener('click', () => {
+                document.getElementById('random-modal').classList.remove('active');
+            });
+
+            // Close random modal when clicking outside
+            document.getElementById('random-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'random-modal') {
+                    document.getElementById('random-modal').classList.remove('active');
+                }
+            });
+
             // Add ingredient button
             document.getElementById('add-ingredient').addEventListener('click', addIngredientRow);
 
@@ -1150,6 +1250,37 @@
             } else {
                 showError('You must have at least one ingredient');
             }
+        }
+
+        function showRandomDrink() {
+            if (allCocktails.length === 0) {
+                showError('No cocktails available. Add some cocktails first!');
+                return;
+            }
+
+            // Pick a random cocktail
+            const randomIndex = Math.floor(Math.random() * allCocktails.length);
+            const cocktail = allCocktails[randomIndex];
+
+            // Display it in the modal
+            const resultDiv = document.getElementById('random-result');
+            resultDiv.innerHTML = `
+                <div class="random-cocktail-name">${cocktail.name}</div>
+                <div class="random-details">
+                    <div class="random-detail-row">
+                        <span class="random-detail-label">Spirit:</span>
+                        <span class="random-detail-value">${cocktail.spirit}</span>
+                    </div>
+                    <div class="random-detail-row">
+                        <span class="random-detail-label">Type:</span>
+                        <span class="random-detail-value">${cocktail.type}</span>
+                    </div>
+                </div>
+                <div class="random-rating">${'★'.repeat(cocktail.rating)}${'☆'.repeat(5 - cocktail.rating)}</div>
+            `;
+
+            // Show the modal
+            document.getElementById('random-modal').classList.add('active');
         }
 
         async function submitRecommendation(e) {
