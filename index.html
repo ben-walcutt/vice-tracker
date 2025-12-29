@@ -995,20 +995,20 @@
             let html = '';
 
             // Previous button
-            html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+            html += `<button class="page-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
 
             // Page numbers
             for (let i = 1; i <= totalPages; i++) {
                 // Show first page, last page, current page, and pages around current
                 if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
                 } else if (i === currentPage - 2 || i === currentPage + 2) {
                     html += `<span class="page-info">...</span>`;
                 }
             }
 
             // Next button
-            html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+            html += `<button class="page-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
 
             // Page info
             const startItem = (currentPage - 1) * itemsPerPage + 1;
@@ -1016,6 +1016,16 @@
             html += `<span class="page-info">${startItem}-${endItem} of ${totalItems}</span>`;
 
             container.innerHTML = html;
+
+            // Add click listeners to all page buttons
+            container.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.disabled) {
+                        const page = parseInt(this.getAttribute('data-page'));
+                        changePage(page);
+                    }
+                });
+            });
         }
 
         function changePage(newPage) {
@@ -1024,9 +1034,6 @@
             // Scroll to top of cocktails section
             document.getElementById('cocktails').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-
-        // Make changePage available globally for onclick
-        window.changePage = changePage;
 
         function displayCocktails(cocktails) {
             const container = document.getElementById('cocktails-list');
