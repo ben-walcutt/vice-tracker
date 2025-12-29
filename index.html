@@ -1025,6 +1025,9 @@
             document.getElementById('cocktails').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
+        // Make changePage available globally for onclick
+        window.changePage = changePage;
+
         function displayCocktails(cocktails) {
             const container = document.getElementById('cocktails-list');
             if (cocktails.length === 0) {
