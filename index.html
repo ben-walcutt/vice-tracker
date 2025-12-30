@@ -956,11 +956,16 @@
             }
 
             allCocktails = data;
-            filterCocktails();
+            currentPage = 1;
+            updateCocktailsDisplay();
         }
 
         function filterCocktails() {
             currentPage = 1; // Reset to first page when filtering
+            updateCocktailsDisplay();
+        }
+
+        function updateCocktailsDisplay() {
             const searchTerm = document.getElementById('cocktails-search').value.toLowerCase();
             const filtered = allCocktails.filter(c => 
                 c.name.toLowerCase().includes(searchTerm) ||
@@ -1030,7 +1035,7 @@
 
         function changePage(newPage) {
             currentPage = newPage;
-            filterCocktails();
+            updateCocktailsDisplay();
             // Scroll to top of cocktails section
             document.getElementById('cocktails').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
